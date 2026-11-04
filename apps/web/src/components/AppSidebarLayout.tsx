@@ -40,6 +40,8 @@ import {
 import { BackgroundThreadAnnouncer } from "./BackgroundThreadAnnouncer";
 import { HistorySwipeNavigation } from "./HistorySwipeNavigation";
 import ThreadSidebar from "./Sidebar";
+import DenseThreadList from "./DenseThreadList";
+import { useDenseThreadListView } from "./denseThreadListView";
 import { SidebarBrandWidthProbe } from "./sidebar/SidebarChrome";
 import { isAppModalPage } from "./sidebar/mainAppLocation";
 import type { SidebarRouteReveal } from "./sidebar/routeReveal";
@@ -403,6 +405,7 @@ function SidebarControl() {
 
 export function AppSidebarLayout({ children }: { children: ReactNode }) {
   const sidebarArea = workspaceAreaProps("sidebar", 0, "Threads");
+  const [denseThreadListView] = useDenseThreadListView();
   const [sidebarRouteReveal] = useState<SidebarRouteReveal>(() => ({
     observedKey: null,
     pendingKey: null,
@@ -469,7 +472,11 @@ export function AppSidebarLayout({ children }: { children: ReactNode }) {
           }}
           style={windowControlsInsetStyle}
         >
-          <ThreadSidebar routeReveal={sidebarRouteReveal} />
+          {/* Local fork: the stock sidebar stays mounted (hidden) so its shortcuts and effects keep running. */}
+          <div className={denseThreadListView ? "hidden" : "contents"}>
+            <ThreadSidebar routeReveal={sidebarRouteReveal} />
+          </div>
+          {denseThreadListView ? <DenseThreadList /> : null}
           <SidebarRail onDoubleClick={resetSidebarWidth} />
         </Sidebar>
         {children}

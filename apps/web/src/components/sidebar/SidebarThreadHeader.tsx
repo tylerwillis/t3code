@@ -1,4 +1,4 @@
-import { FolderPlusIcon, SearchIcon, SquarePenIcon, XIcon } from "lucide-react";
+import { FolderPlusIcon, ListIcon, SearchIcon, SquarePenIcon, XIcon } from "lucide-react";
 import {
   type ComponentProps,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -11,6 +11,7 @@ import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
 import { SidebarInput, SidebarMenuButton } from "../ui/sidebar";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
+import { useDenseThreadListView } from "../denseThreadListView";
 
 export interface SidebarThreadHeaderProps {
   hasProjects: boolean;
@@ -49,6 +50,7 @@ export function SidebarThreadHeader({
   activeSearchResultIndex,
   onClearSearch,
 }: SidebarThreadHeaderProps) {
+  const [, setDenseThreadListView] = useDenseThreadListView();
   const resultsVisible = isSearching && searchResultCount > 0;
   // Shrinking results can remove the active option; never leave aria-activedescendant pointing at it.
   const activeResultExists = resultsVisible && activeSearchResultIndex < searchResultCount;
@@ -97,6 +99,13 @@ export function SidebarThreadHeader({
         ) : null}
       </div>
       <div className="flex shrink-0 items-center">
+        {/* Local fork: switch to the dense thread list. */}
+        <SidebarHeaderIconButton
+          label="Dense list view"
+          onClick={() => setDenseThreadListView(true)}
+        >
+          <ListIcon />
+        </SidebarHeaderIconButton>
         {hasProjects ? (
           <>
             {projectScope}
